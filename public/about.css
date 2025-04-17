@@ -1,0 +1,302 @@
+/* Reset default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Typography */
+body {
+  font-family: "Roboto", sans-serif;
+  color: #333333;
+  background-color: #ffffff;
+}
+
+/* Utility classes */
+.bg-white {
+  background-color: #ffffff;
+}
+.bg-gray-50 {
+  background-color: #fafafa;
+}
+.bg-gray-100 {
+  background-color: #f5f5f5;
+}
+.bg-dark-gray {
+  background-color: #333333;
+}
+.text-white {
+  color: #ffffff;
+}
+.text-gray {
+  color: #666666;
+}
+.text-dark-gray {
+  color: #333333;
+}
+.text-orange {
+  color: #f05a28;
+}
+.text-lg {
+  font-size: 1.125rem;
+}
+.text-xl {
+  font-size: 1.25rem;
+}
+.text-2xl {
+  font-size: 1.5rem;
+}
+.text-3xl {
+  font-size: 1.875rem;
+}
+.text-4xl {
+  font-size: 2.25rem;
+}
+.text-5xl {
+  font-size: 3rem;
+}
+.font-bold {
+  font-weight: 700;
+}
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+.py-16 {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+.py-20 {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+.p-4 {
+  padding: 1rem;
+}
+.p-8 {
+  padding: 2rem;
+}
+.p-10 {
+  padding: 2.5rem;
+}
+.mb-4 {
+  margin-bottom: 1rem;
+}
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+.mb-8 {
+  margin-bottom: 2rem;
+}
+.mb-12 {
+  margin-bottom: 3rem;
+}
+.space-y-12 > * + * {
+  margin-top: 3rem;
+}
+.space-y-16 > * + * {
+  margin-top: 4rem;
+}
+.text-center {
+  text-align: center;
+}
+.max-w-xl {
+  max-width: 36rem;
+}
+.max-w-2xl {
+  max-width: 48rem;
+}
+.max-w-3xl {
+  max-width: 60rem;
+}
+.w-full {
+  width: 100%;
+}
+.rounded {
+  border-radius: 0.25rem;
+}
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+.rounded-full {
+  border-radius: 9999px;
+}
+.shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.shadow-lg {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+.border {
+  border: 1px solid #e5e7eb;
+}
+.border-orange {
+  border: 1px solid #f05a28;
+}
+.container {
+  max-width: 1200px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+.flex {
+  display: flex;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.items-center {
+  align-items: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.gap-6 {
+  gap: 1.5rem;
+}
+.gap-12 {
+  gap: 3rem;
+}
+.space-x-4 > * + * {
+  margin-left: 1rem;
+}
+.w-full {
+  width: 100%;
+}
+.sm\:w-1\/3 {
+  width: 33.333333%;
+}
+.w-16 {
+  width: 4rem;
+}
+.h-16 {
+  height: 4rem;
+}
+.h-64 {
+  height: 16rem;
+}
+.object-cover {
+  object-fit: cover;
+}
+
+/* Navigation */
+nav {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+  color: #00c4b4; /* Bright teal */
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #009688; /* Slightly darker teal on hover */
+  text-decoration: underline;
+}
+
+/* Banner Section */
+.banner-section {
+  background: linear-gradient(135deg, #f05a28 0%, #ffffff 100%);
+  padding: 3rem 0;
+  color: #ffffff;
+}
+
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, #fff7f5 0%, #f5f5f5 100%);
+  padding: 6rem 0;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #f05a28;
+  color: #ffffff;
+  padding: 0.75rem 2rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #d94a22;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #ffffff;
+  color: #f05a28;
+}
+
+/* Form Inputs */
+form input,
+form select {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  width: 100%;
+}
+
+form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .sm\:w-1\/3 {
+    width: 100%;
+  }
+}
+.hero {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  background: url("/images/about-hero-bg.jpg") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+}
+.hero-content {
+  position: relative;
+  color: #fff;
+  z-index: 2;
+  max-width: 600px;
+  padding: 20px;
+}
+.hero-content h1 {
+  font-size: 2.5em;
+  margin-bottom: 0.5em;
+}
+.hero-content p {
+  font-size: 1.2em;
+  line-height: 1.5;
+}

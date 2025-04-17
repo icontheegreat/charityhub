@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= org.name %></title>
+    <link
+      href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100">
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-600 text-white p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <a href="/" class="text-2xl font-bold">My Donation Site</a>
+        <div>
+          <a href="/" class="mx-2 hover:underline">Home</a>
+          <a href="/about" class="mx-2 hover:underline">About</a>
+          <a href="/donate" class="mx-2 hover:underline">Donate</a>
+          <a href="/contact" class="mx-2 hover:underline">Contact</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mx-auto p-6 max-w-3xl">
+      <h1 class="text-4xl font-bold text-gray-800 mb-6"><%= org.name %></h1>
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">About Us</h2>
+        <p class="text-gray-600 leading-relaxed"><%= org.about %></p>
+      </section>
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Our Impact</h2>
+        <div
+          class="text-gray-600 leading-relaxed"
+          style="white-space: pre-wrap"
+        >
+          <%- org.impact %>
+        </div>
+      </section>
+      <section class="mb-12">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">
+          Donate to <%= org.name %>
+        </h2>
+        <form
+          action="/donate-crypto"
+          method="POST"
+          class="bg-white p-6 rounded-lg shadow-md"
+        >
+          <input type="hidden" name="orgId" value="<%= org.id %>" />
+          <div class="mb-4">
+            <label class="block text-gray-700 font-medium">Your Name</label>
+            <input
+              type="text"
+              name="name"
+              class="border p-2 w-full rounded"
+              placeholder="Your Name"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 font-medium">Email</label>
+            <input
+              type="email"
+              name="email"
+              class="border p-2 w-full rounded"
+              placeholder="Your Email"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 font-medium"
+              >Amount ($, min $100)</label
+            >
+            <input
+              type="number"
+              name="amount"
+              class="border p-2 w-full rounded"
+              min="100"
+              placeholder="Enter Amount"
+              required
+            />
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 font-medium"
+              >Cryptocurrency</label
+            >
+            <select name="crypto" class="border p-2 w-full rounded" required>
+              <option value="btc">Bitcoin (BTC)</option>
+              <option value="eth">Ethereum (ETH)</option>
+              <option value="sol">Solana (SOL)</option>
+            </select>
+          </div>
+          <button
+            type="submit"
+            class="bg-blue-500 text-white p-2 rounded w-full hover:bg-blue-600"
+          >
+            Donate Now
+          </button>
+        </form>
+      </section>
+      <a href="/" class="text-blue-500 hover:underline">Back to Home</a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+      <div class="container mx-auto text-center">
+        <p>© 2025 My Donation Site. All rights reserved.</p>
+        <a href="/about" class="text-blue-300 hover:underline">About Us</a> |
+        <a href="/contact" class="text-blue-300 hover:underline">Contact</a>
+      </div>
+    </footer>
+  </body>
+</html>

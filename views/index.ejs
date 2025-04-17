@@ -1,0 +1,279 @@
+<%- include("partials/header") %>
+
+<main>
+  <style>
+    /* HERO SECTION */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 70vh;
+      background: url("/images/hero-bg.jpg") center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.45);
+    }
+    .hero-content {
+      position: relative;
+      color: #fff;
+      z-index: 2;
+      max-width: 600px;
+      padding: 20px;
+    }
+    .hero-content h1 {
+      font-size: 3em;
+      margin-bottom: 0.5em;
+    }
+    .hero-content p {
+      font-size: 1.2em;
+      margin-bottom: 1em;
+      line-height: 1.5;
+    }
+    .hero-content a {
+      display: inline-block;
+      background-color: #f46d25;
+      color: #fff;
+      padding: 12px 30px;
+      font-size: 1em;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .hero-content a:hover {
+      background-color: #d75c1f;
+    }
+
+    /* FEATURES SECTION (3 columns) */
+    .features {
+      background-color: #fafafa;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .features h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .features p.section-subtitle {
+      margin-bottom: 40px;
+      color: #777;
+      font-size: 1.1em;
+    }
+    .feature-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+    .feature-card {
+      background: #fff;
+      width: 300px;
+      padding: 30px 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+    .feature-card i {
+      font-size: 3em;
+      color: #f46d25;
+      margin-bottom: 15px;
+    }
+    .feature-card h3 {
+      color: #333;
+      font-size: 1.4em;
+      margin-bottom: 10px;
+    }
+    .feature-card p {
+      color: #666;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    /* MAKE A DIFFERENCE SECTION */
+    .difference {
+      text-align: center;
+      padding: 60px 20px;
+      background-color: #fff;
+    }
+    .difference h2 {
+      font-size: 2.5em;
+      color: #222;
+      margin-bottom: 15px;
+    }
+    .difference p {
+      font-size: 1.2em;
+      color: #555;
+      max-width: 700px;
+      margin: 0 auto 30px auto;
+      line-height: 1.5;
+    }
+
+    /* ORGANIZATIONS SECTION */
+    .organizations {
+      padding: 60px 20px;
+      background-color: #fafafa;
+      text-align: center;
+    }
+    .organizations h2 {
+      font-size: 2.5em;
+      margin-bottom: 40px;
+    }
+    .org-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+    .org-card {
+      width: 300px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+    }
+    .org-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .org-card h3 {
+      color: #f46d25;
+      margin-bottom: 10px;
+    }
+    .org-card p {
+      color: #444;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+    .org-card a {
+      display: inline-block;
+      margin-top: 10px;
+      background-color: #f46d25;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .org-card a:hover {
+      background-color: #d75c1f;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .hero {
+        height: 60vh;
+      }
+      .hero-content h1 {
+        font-size: 2em;
+      }
+      .features h2,
+      .difference h2,
+      .organizations h2 {
+        font-size: 2em;
+      }
+      .feature-card,
+      .org-card {
+        width: 90%;
+        margin: 0 auto;
+      }
+    }
+  </style>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Charity Is the Best Social Work</h1>
+      <p>
+        Every day brings new stories of kindness and resilience. In this
+        journey, your helping hand can make a world of difference.
+      </p>
+      <a href="#difference">Learn More</a>
+    </div>
+  </section>
+
+  <!-- FEATURES SECTION (3 Columns) -->
+  <section class="features">
+    <h2>How You Can Help</h2>
+    <p class="section-subtitle">
+      Lend your support in the ways that matter most.
+    </p>
+    <div class="feature-cards">
+      <div class="feature-card">
+        <i class="fas fa-hands-helping"></i>
+        <h3>Become a Volunteer</h3>
+        <p>
+          Join our community of compassionate individuals. Together, we’ll bring
+          hope where it’s needed most.
+        </p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-child"></i>
+        <h3>Adopt a Child</h3>
+        <p>
+          Support a child’s education and well-being. Your generosity can
+          transform a young life.
+        </p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-donate"></i>
+        <h3>Donate</h3>
+        <p>
+          Every contribution drives meaningful change. Help us expand our reach
+          to more communities.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAKE A DIFFERENCE SECTION -->
+  <section class="difference" id="difference">
+    <h2>Make a Difference Today</h2>
+    <p>
+      Explore a range of organizations dedicated to improving lives. From
+      education and shelter to climate initiatives, your donations have the
+      power to create real impact.
+    </p>
+  </section>
+
+  <!-- ORGANIZATIONS SECTION -->
+  <section class="organizations" id="organizations">
+    <h2>Choose an Organization</h2>
+    <div class="org-cards">
+      <% if (organizations && organizations.length > 0) { %> <%
+      organizations.forEach(org => { %>
+      <div class="org-card">
+        <img src="/images/<%= org.slug %>-icon.png" alt="<%= org.name %>" />
+        <h3><%= org.name %></h3>
+        <p>
+          <% if (org.slug === "helping-hands") { %> Providing shelter and
+          support to those in need. <% } else if (org.slug === "beacon-of-hope")
+          { %> Empowering underprivileged communities through education. <% }
+          else { %> Supporting reforestation and climate-change awareness. <% }
+          %>
+        </p>
+        <a href="/donate?org=<%= org.slug %>">Donate</a>
+      </div>
+      <% }) %> <% } else { %>
+      <p>No organizations available at the moment.</p>
+      <% } %>
+    </div>
+  </section>
+</main>
+
+<%- include("partials/footer") %>

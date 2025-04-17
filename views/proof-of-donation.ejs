@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proof of Donation</title>
+    <link
+      href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100">
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-600 text-white p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <a href="/" class="text-2xl font-bold">My Donation Site</a>
+        <div>
+          <a href="/" class="mx-2 hover:underline">Home</a>
+          <a href="/about" class="mx-2 hover:underline">About</a>
+          <a href="/donate" class="mx-2 hover:underline">Donate</a>
+          <a href="/contact" class="mx-2 hover:underline">Contact</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mx-auto p-6 max-w-3xl text-center">
+      <h1 class="text-3xl font-bold text-gray-800 mb-6">Proof of Donation</h1>
+      <p class="text-xl text-gray-600 mb-4">
+        Please review your donation details:
+      </p>
+      <div class="bg-white p-6 rounded shadow-md mb-6">
+        <p class="text-lg"><strong>Name:</strong> <%= name %></p>
+        <p class="text-lg"><strong>Email:</strong> <%= email %></p>
+        <p class="text-lg">
+          <strong>Amount:</strong> $<%= amount %> in <%= crypto.toUpperCase() %>
+        </p>
+        <p class="text-lg"><strong>Organization:</strong> <%= orgName %></p>
+      </div>
+      <form action="/donation-confirmed" method="POST">
+        <input type="hidden" name="name" value="<%= name %>" />
+        <input type="hidden" name="amount" value="<%= amount %>" />
+        <input type="hidden" name="crypto" value="<%= crypto %>" />
+        <input type="hidden" name="orgName" value="<%= orgName %>" />
+        <button
+          type="submit"
+          class="bg-blue-500 text-white p-3 rounded hover:bg-blue-600"
+        >
+          Confirm Donation
+        </button>
+      </form>
+      <a href="/" class="text-blue-500 mt-4 block">Cancel</a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6">
+      <div class="container mx-auto text-center">
+        <p>© 2025 My Donation Site. All rights reserved.</p>
+        <a href="/about" class="text-blue-300 hover:underline">About Us</a> |
+        <a href="/contact" class="text-blue-300 hover:underline">Contact</a>
+      </div>
+    </footer>
+  </body>
+</html>

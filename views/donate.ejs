@@ -1,0 +1,256 @@
+<%- include("partials/header") %>
+
+<main>
+  <style>
+    .donate-hero {
+      position: relative;
+      width: 100%;
+      height: 50vh;
+      background: url("/images/hero-bg.jpg") center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .donate-hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .donate-hero-content {
+      position: relative;
+      color: #fff;
+      z-index: 2;
+      max-width: 600px;
+      padding: 20px;
+    }
+    .donate-hero-content h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.5em;
+    }
+    .donate-hero-content p {
+      font-size: 1.2em;
+      line-height: 1.5;
+    }
+
+    .org-selection {
+      padding: 60px 20px;
+      background-color: #fafafa;
+      text-align: center;
+    }
+    .org-selection h2 {
+      font-size: 2.5em;
+      margin-bottom: 40px;
+      color: #333;
+    }
+    .org-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+    .org-card {
+      width: 300px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .org-card:hover {
+      transform: translateY(-5px);
+    }
+    .org-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .org-card h3 {
+      color: #f46d25;
+      margin-bottom: 10px;
+    }
+    .org-card p {
+      color: #444;
+      font-size: 0.95em;
+      line-height: 1.5;
+      margin-bottom: 15px;
+    }
+    .org-card a {
+      display: inline-block;
+      background-color: #f46d25;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .org-card a:hover {
+      background-color: #d75c1f;
+    }
+
+    .donation-form {
+      padding: 60px 20px;
+      background-color: #fff;
+      text-align: center;
+    }
+    .donation-form h2 {
+      font-size: 2em;
+      color: #f46d25;
+      margin-bottom: 20px;
+    }
+    .donation-form form {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .donation-form label {
+      display: block;
+      text-align: left;
+      margin: 10px 0 5px;
+      color: #333;
+    }
+    .donation-form input,
+    .donation-form select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+    .donation-form button {
+      background-color: #f46d25;
+      color: #fff;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .donation-form button:hover {
+      background-color: #d75c1f;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #f46d25;
+      text-decoration: none;
+      font-size: 1em;
+      transition: color 0.3s;
+    }
+    .back-link:hover {
+      color: #d75c1f;
+    }
+
+    @media (max-width: 768px) {
+      .donate-hero {
+        height: 40vh;
+      }
+      .donate-hero-content h1 {
+        font-size: 2em;
+      }
+      .org-selection h2 {
+        font-size: 2em;
+      }
+      .org-card {
+        width: 90%;
+        margin: 0 auto;
+      }
+      .donation-form h2 {
+        font-size: 1.8em;
+      }
+    }
+  </style>
+
+  <!-- DONATE HERO SECTION -->
+  <section class="donate-hero">
+    <div class="donate-hero-overlay"></div>
+    <div class="donate-hero-content">
+      <h1>Support a Cause You Care About</h1>
+      <p>
+        Your donation can transform lives. Choose an organization below and make
+        a difference today.
+      </p>
+    </div>
+  </section>
+
+  <% if (!org) { %>
+  <!-- ORGANIZATION SELECTION -->
+  <section class="org-selection">
+    <h2>Select an Organization to Support</h2>
+    <div class="org-cards">
+      <div class="org-card">
+        <img src="/images/helping-hands-icon.png" alt="Helping Hands" />
+        <h3>Helping Hands</h3>
+        <p>
+          Helping Hands provides medical aid and relief to underserved
+          communities, having supported over 2 million beneficiaries with free
+          healthcare and saving them ₹103.66 crores in expenses.
+        </p>
+        <a href="/donate?org=helping-hands">Donate Now</a>
+      </div>
+      <div class="org-card">
+        <img src="/images/beacon-of-hope-icon.png" alt="Beacon of Hope" />
+        <h3>Beacon of Hope</h3>
+        <p>
+          Beacon of Hope empowers communities through education, healthcare, and
+          poverty alleviation, helping residents recover and excel with
+          initiatives like disaster relief programs.
+        </p>
+        <a href="/donate?org=beacon-of-hope">Donate Now</a>
+      </div>
+      <div class="org-card">
+        <img src="/images/baobab-icon.png" alt="Baobab Foundation" />
+        <h3>Baobab Foundation</h3>
+        <p>
+          Baobab Foundation is a member-led network fighting systemic racism and
+          intersectional injustice, resourcing racial justice movements across
+          the UK with radical compassion.
+        </p>
+        <a href="/donate?org=baobab">Donate Now</a>
+      </div>
+    </div>
+  </section>
+  <% } else { %>
+  <!-- DONATION FORM -->
+  <section class="donation-form">
+    <h2>Donate to <%= org.name %></h2>
+    <form method="POST" action="/donate">
+      <input type="hidden" name="org" value="<%= org.slug %>" />
+      <label for="name">Your Name:</label>
+      <input type="text" id="name" name="name" required />
+      <label for="email">Your Email:</label>
+      <input type="email" id="email" name="email" required />
+      <label for="amount">Donation Amount (USD, Minimum $100):</label>
+      <input
+        type="number"
+        id="amount"
+        name="amount"
+        min="100"
+        step="1"
+        required
+      />
+      <label for="crypto">Cryptocurrency:</label>
+      <select id="crypto" name="crypto">
+        <option value="bitcoin">Bitcoin (BTC)</option>
+        <option value="solana">Solana (SOL)</option>
+        <option value="usdt">Tether (USDT)</option>
+        <option value="ethereum">Ethereum (ETH)</option>
+      </select>
+      <label for="txid">Transaction ID:</label>
+      <input type="text" id="txid" name="txid" required />
+      <button type="submit">Submit Donation</button>
+    </form>
+    <a href="/donate" class="back-link">Choose a Different Organization</a>
+  </section>
+  <% } %>
+</main>
+
+<%- include("partials/footer") %>

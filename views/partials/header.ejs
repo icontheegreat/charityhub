@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CharityHub</title>
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <style>
+      /* RESET */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Arial", sans-serif;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+      body {
+        background-color: #fff;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      main {
+        flex: 1 0 auto;
+      }
+      /* NAVBAR */
+      header {
+        background: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .navbar {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #f46d25;
+        text-decoration: none;
+      }
+      .nav-links a {
+        margin-left: 25px;
+        color: #333;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+      .nav-links a:hover {
+        color: #f46d25;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER / NAVBAR -->
+    <header>
+      <div class="navbar">
+        <a href="/" class="logo">CharityHub</a>
+        <div class="nav-links">
+          <a href="/">Home</a>
+          <a href="/about">About Us</a>
+          <a href="/donate">Donate</a>
+          <a href="/contact">Contact</a>
+        </div>
+      </div>
+    </header>
+  </body>
+</html>

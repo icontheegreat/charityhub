@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Donate to <%= org.name %> - My Donation Site</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <!-- Navigation Bar -->
+    <nav class="bg-indigo-700 text-white p-6 shadow-lg">
+      <div
+        class="container mx-auto flex flex-col sm:flex-row justify-between items-center"
+      >
+        <a href="/" class="text-3xl font-extrabold tracking-tight"
+          >My Donation Site</a
+        >
+        <div class="mt-4 sm:mt-0">
+          <a href="/" class="mx-3 text-lg hover:text-indigo-200 transition"
+            >Home</a
+          >
+          <a href="/about" class="mx-3 text-lg hover:text-indigo-200 transition"
+            >About Us</a
+          >
+          <a
+            href="/donate"
+            class="mx-3 text-lg hover:text-indigo-200 transition"
+            >Donate</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- Donation Form -->
+    <div class="py-24">
+      <div class="container mx-auto px-6 max-w-3xl">
+        <h1 class="text-5xl font-bold text-gray-800 mb-8 text-center">
+          Donate to <%= org.name %>
+        </h1>
+        <div class="bg-white rounded-lg shadow-lg p-10">
+          <% let imageUrl; if (org.id === 'general') { imageUrl =
+          'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846'; } else
+          if (org.id === 'disaster') { imageUrl =
+          'https://images.unsplash.com/photo-1593113598332-cd288d649433'; } else
+          { imageUrl =
+          'https://images.unsplash.com/photo-1544027993-37dbfe43562a'; } %>
+          <img
+            src="<%= imageUrl %>?w=200&h=200&fit=crop"
+            alt="<%= org.name %> Image"
+            class="mx-auto mb-6 h-32 w-32 rounded-full object-cover shadow-md"
+          />
+          <p class="text-lg text-gray-600 mb-8 text-center leading-relaxed">
+            <%= org.about.split('. ')[0] + '.' %>
+          </p>
+          <form action="/donate-crypto" method="POST" class="space-y-6">
+            <input type="hidden" name="orgId" value="<%= org.id %>" />
+            <div>
+              <label class="block text-gray-700 font-medium mb-2 text-lg"
+                >Your Name</label
+              >
+              <input
+                type="text"
+                name="name"
+                class="border border-gray-300 p-4 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                placeholder="Your Name"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2 text-lg"
+                >Email</label
+              >
+              <input
+                type="email"
+                name="email"
+                class="border border-gray-300 p-4 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                placeholder="Your Email"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2 text-lg"
+                >Amount ($, min $100)</label
+              >
+              <input
+                type="number"
+                name="amount"
+                class="border border-gray-300 p-4 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                min="100"
+                placeholder="Enter Amount"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-gray-700 font-medium mb-2 text-lg"
+                >Cryptocurrency</label
+              >
+              <select
+                name="crypto"
+                class="border border-gray-300 p-4 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                required
+              >
+                <option value="btc">Bitcoin (BTC)</option>
+                <option value="eth">Ethereum (ETH)</option>
+                <option value="sol">Solana (SOL)</option>
+              </select>
+            </div>
+            <button
+              type="submit"
+              class="bg-indigo-600 text-white font-semibold p-4 rounded-lg w-full hover:bg-indigo-700 transition"
+            >
+              Donate Now
+            </button>
+          </form>
+        </div>
+        <div class="text-center mt-8">
+          <a href="/donate" class="text-indigo-600 hover:underline text-lg"
+            >Choose Another Organization</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-indigo-900 text-white py-8">
+      <div class="container mx-auto text-center">
+        <p class="text-lg">© 2025 My Donation Site. All rights reserved.</p>
+        <div class="mt-4">
+          <a href="/about" class="mx-3 hover:text-indigo-200">About Us</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

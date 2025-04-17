@@ -1,0 +1,183 @@
+<%- include("partials/header") %>
+
+<main>
+  <style>
+    .contact-hero {
+      position: relative;
+      width: 100%;
+      height: 50vh;
+      background: url("/images/hero-bg.jpg") center/cover no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .contact-hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .contact-hero-content {
+      position: relative;
+      color: #fff;
+      z-index: 2;
+      max-width: 600px;
+      padding: 20px;
+    }
+    .contact-hero-content h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.5em;
+    }
+    .contact-hero-content p {
+      font-size: 1.2em;
+      line-height: 1.5;
+    }
+
+    .contact-form-section {
+      padding: 60px 20px;
+      background-color: #fff;
+      text-align: center;
+    }
+    .contact-form-section h2 {
+      font-size: 2em;
+      color: #f46d25;
+      margin-bottom: 20px;
+    }
+    .contact-form-section form {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .contact-form-section label {
+      display: block;
+      text-align: left;
+      margin: 10px 0 5px;
+      color: #333;
+    }
+    .contact-form-section input,
+    .contact-form-section textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+    .contact-form-section button {
+      background-color: #f46d25;
+      color: #fff;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .contact-form-section button:hover {
+      background-color: #d75c1f;
+    }
+
+    .social-media-section {
+      padding: 20px;
+      text-align: center;
+      background-color: #fafafa;
+    }
+    .social-media-section h3 {
+      font-size: 1.5em;
+      color: #f46d25;
+      margin-bottom: 15px;
+    }
+    .social-media-section p {
+      font-size: 1.1em;
+      color: #444;
+      margin-bottom: 20px;
+    }
+    .social-media-section a {
+      display: inline-block;
+      margin: 0 15px;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 1em;
+      transition: opacity 0.3s;
+    }
+    .social-media-section a:hover {
+      opacity: 0.8;
+    }
+    .social-media-section .instagram {
+      background-color: #e1306c;
+    }
+    .social-media-section .twitter {
+      background-color: #1da1f2;
+    }
+
+    @media (max-width: 768px) {
+      .contact-hero {
+        height: 40vh;
+      }
+      .contact-hero-content h1 {
+        font-size: 2em;
+      }
+      .contact-hero-content p {
+        font-size: 1em;
+      }
+      .contact-form-section h2 {
+        font-size: 1.8em;
+      }
+      .social-media-section a {
+        display: block;
+        margin: 10px auto;
+        width: 200px;
+      }
+    }
+  </style>
+
+  <!-- CONTACT HERO SECTION -->
+  <section class="contact-hero">
+    <div class="contact-hero-overlay"></div>
+    <div class="contact-hero-content">
+      <h1>Contact Us</h1>
+      <p>
+        We’d love to hear from you! Reach out with any questions, feedback, or
+        to get involved with CharityHub.
+      </p>
+    </div>
+  </section>
+
+  <!-- CONTACT FORM SECTION -->
+  <section class="contact-form-section">
+    <h2>Send Us a Message</h2>
+    <form method="POST" action="/contact">
+      <label for="name">Your Name:</label>
+      <input type="text" id="name" name="name" required />
+      <label for="email">Your Email:</label>
+      <input type="email" id="email" name="email" required />
+      <label for="message">Your Message:</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+
+  <!-- SOCIAL MEDIA SECTION -->
+  <section class="social-media-section">
+    <h3>Connect With Us on Social Media</h3>
+    <p>
+      Follow us or send us a message on Instagram and Twitter to stay updated
+      and get in touch!
+    </p>
+    <a
+      href="https://instagram.com/charityhubofficial"
+      class="instagram"
+      target="_blank"
+      >Instagram</a
+    >
+    <a href="https://twitter.com/charityhuborg" class="twitter" target="_blank"
+      >Twitter</a
+    >
+  </section>
+</main>
+
+<%- include("partials/footer") %>

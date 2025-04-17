@@ -1,0 +1,17 @@
+{
+  "name": "my-donation-site",
+  "version": "1.0.0",
+  "description": "A donation site for supporting nonprofit organizations",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  },
+  "author": "",
+  "license": "ISC",
+  "keywords": []
+}

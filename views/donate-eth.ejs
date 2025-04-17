@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Donate ETH</title>
+    <link
+      href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100">
+    <div class="container mx-auto p-6 max-w-3xl text-center">
+      <h1 class="text-3xl font-bold text-gray-800 mb-6">
+        Donate with Ethereum (ETH)
+      </h1>
+      <p class="text-gray-600 mb-4">
+        You’re donating $<%= amount %> to <%= orgName %>.
+      </p>
+      <p class="text-xl font-bold text-gray-700 mb-4">
+        Send <%= (amount / 2000).toFixed(6) %> ETH
+      </p>
+      <p class="text-gray-600 mb-6">
+        To this address:
+        <strong>0xExampleEthereumAddress456</strong> (simulated)
+      </p>
+      <form action="/confirm-donation" method="POST">
+        <input type="hidden" name="name" value="<%= name %>" />
+        <input type="hidden" name="email" value="<%= email %>" />
+        <input type="hidden" name="amount" value="<%= amount %>" />
+        <input type="hidden" name="crypto" value="eth" />
+        <input type="hidden" name="orgId" value="<%= orgId %>" />
+        <button
+          type="submit"
+          class="bg-blue-500 text-white p-3 rounded hover:bg-blue-600"
+        >
+          I’ve Sent the ETH
+        </button>
+      </form>
+      <a href="/" class="text-blue-500 mt-4 block">Back to Home</a>
+    </div>
+  </body>
+</html>
