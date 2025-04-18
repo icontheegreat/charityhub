@@ -1,15 +1,12 @@
 {
-  "name": "my-donation-site",
+  "name": "charityhub",
   "version": "1.0.0",
-  "description": "A donation site for supporting nonprofit organizations",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "ejs": "^3.1.9",
-    "express": "^4.18.2"
-  },
-  "author": "",
-  "license": "ISC"
+    "express": "^4.17.1",
+    "ejs": "^3.1.6"
+  }
 }
