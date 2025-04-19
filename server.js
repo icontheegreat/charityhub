@@ -54,18 +54,33 @@ app.get("/", (req, res) => {
 });
 
 // Donate page (GET)
-app.get("/donate/:org?", (req, res) => {
-  const orgSlug = req.params.org || req.query.org || "";
-  const org = organizations.find((o) => o.slug === orgSlug) || null;
-  const formattedOrg = org
-    ? org.name
-    : orgSlug
-    ? orgSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
-    : "";
-  console.log("Donate route - orgSlug:", orgSlug, "org:", org);
-  res.render("donate", { org, formattedOrg, organizations });
+app.post("/donate", (req, res) => {
+  const { org, name, email, amount, crypto } = req.body;
+  if (!org || !name || !email || !amount || !crypto) {
+    console.error("Missing form data:", req.body);
+    return res
+      .status(400)
+      .render("error", { message: "All fields are required" });
+  }
+  const donation = {
+    id: donations.length + 1,
+    org,
+    name,
+    email,
+    amount: parseFloat(amount),
+    crypto,
+    status: "Pending",
+  };
+  try {
+    donations.push(donation);
+    fs.writeFileSync("donations.json", JSON.stringify(donations, null, 2));
+    console.log("Donation saved:", donation);
+    res.redirect(`/donate-crypto?donationId=${donation.id}`);
+  } catch (error) {
+    console.error("Error saving donation:", error.message);
+    res.status(500).render("error", { message: "Error saving donation" });
+  }
 });
-
 // Handle donation form submission (POST)
 app.post("/donate", (req, res) => {
   const { org, name, email, amount, crypto, txid } = req.body;
