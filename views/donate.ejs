@@ -223,22 +223,22 @@
   <section class="donation-form">
     <h2>Donate to <%= org.name %></h2>
     <form method="POST" action="/donate">
-      <label for="org">Organization:</label>
-      <select id="org" name="org" required>
-        <option value="" disabled selected>Select an organization</option>
-        <% organizations.forEach(org => { %>
-          <option value="<%= org.name %>" <%= org && org.name === org.name ? 'selected' : '' %>><%= org.name %></option>
-        <% }) %>
-      </select>
+      <input type="hidden" name="org" value="<%= org.name %>" />
       <label for="name">Your Name:</label>
       <input type="text" id="name" name="name" required />
       <label for="email">Your Email:</label>
       <input type="email" id="email" name="email" required />
-      <label for="amount">Donation Amount (USD):</label>
-      <input type="number" id="amount" name="amount" step="0.01" min="1" required />
+      <label for="amount">Donation Amount (USD, Minimum $100):</label>
+      <input
+        type="number"
+        id="amount"
+        name="amount"
+        min="100"
+        step="1"
+        required
+      />
       <label for="crypto">Cryptocurrency:</label>
-      <select id="crypto" name="crypto" required>
-        <option value="" disabled selected>Select a cryptocurrency</option>
+      <select id="crypto" name="crypto">
         <option value="bitcoin">Bitcoin (BTC)</option>
         <option value="solana">Solana (SOL)</option>
         <option value="usdt">Tether (USDT)</option>
