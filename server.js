@@ -54,6 +54,19 @@ app.get("/", (req, res) => {
 });
 
 // Donate page (GET)
+app.get("/donate/:org?", (req, res) => {
+  const orgSlug = req.params.org || req.query.org || "";
+  const org = organizations.find((o) => o.slug === orgSlug) || null;
+  const formattedOrg = org
+    ? org.name
+    : orgSlug
+    ? orgSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    : "";
+  console.log("Donate route - orgSlug:", orgSlug, "org:", org);
+  res.render("donate", { org, formattedOrg, organizations });
+});
+
+// Handle donation form submission (POST)
 app.post("/donate", (req, res) => {
   const { org, name, email, amount, crypto } = req.body;
   if (!org || !name || !email || !amount || !crypto) {
@@ -81,23 +94,6 @@ app.post("/donate", (req, res) => {
     res.status(500).render("error", { message: "Error saving donation" });
   }
 });
-// Handle donation form submission (POST)
-app.post("/donate", (req, res) => {
-  const { org, name, email, amount, crypto, txid } = req.body;
-  const donation = {
-    id: donations.length + 1,
-    org,
-    name,
-    email,
-    amount: parseFloat(amount),
-    crypto,
-    txid,
-    status: "Pending",
-  };
-  donations.push(donation);
-  fs.writeFileSync("donations.json", JSON.stringify(donations, null, 2));
-  res.redirect(`/donate-crypto?donationId=${donation.id}`);
-});
 
 // Donation confirmation page
 app.get("/donate-crypto", (req, res) => {
@@ -106,15 +102,12 @@ app.get("/donate-crypto", (req, res) => {
   if (!donation) {
     return res.status(404).render("error", { message: "Donation not found" });
   }
-
-  // Define cryptocurrency addresses (replace with your actual wallet addresses)
   const cryptoAddresses = {
     bitcoin: "your-bitcoin-address-here",
     solana: "your-solana-address-here",
     usdt: "your-usdt-address-here",
     ethereum: "your-ethereum-address-here",
   };
-
   const address = cryptoAddresses[donation.crypto] || "Address not available";
   res.render("donate-crypto", { donation, address });
 });
@@ -125,8 +118,13 @@ app.post("/confirm-donation", (req, res) => {
   const donation = donations.find((d) => d.id === donationId);
   if (donation) {
     donation.status = "Pending Approval";
-    fs.writeFileSync("donations.json", JSON.stringify(donations, null, 2));
-    res.redirect(`/success-crypto?donationId=${donation.id}`);
+    try {
+      fs.writeFileSync("donations.json", JSON.stringify(donations, null, 2));
+      res.redirect(`/success-crypto?donationId=${donation.id}`);
+    } catch (error) {
+      console.error("Error saving donation status:", error.message);
+      res.status(500).render("error", { message: "Error confirming donation" });
+    }
   } else {
     res.status(404).render("error", { message: "Donation not found" });
   }
@@ -143,7 +141,6 @@ app.get("/success-crypto", (req, res) => {
     amount: donation.amount,
     org: donation.org,
     crypto: donation.crypto,
-    txid: donation.txid,
     name: donation.name,
     email: donation.email,
   });
@@ -188,9 +185,18 @@ app.post("/update-donation-status", (req, res) => {
   const donation = donations.find((d) => d.id === parseInt(id));
   if (donation) {
     donation.status = status;
-    fs.writeFileSync("donations.json", JSON.stringify(donations, null, 2));
+    try {
+      fs.writeFileSync("donations.json", JSON.stringify(donations, null, 2));
+      res.redirect("/org-dashboard");
+    } catch (error) {
+      console.error("Error saving donation status:", error.message);
+      res
+        .status(500)
+        .render("error", { message: "Error updating donation status" });
+    }
+  } else {
+    res.status(404).render("error", { message: "Donation not found" });
   }
-  res.redirect("/org-dashboard");
 });
 
 // Catch-all route
