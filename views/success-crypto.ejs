@@ -1,4 +1,4 @@
-<%- include("partials/header") %>
+<%- include("partials/header") %> console.log("Donation data:", donation);
 
 <main>
   <style>
@@ -43,7 +43,8 @@
 
   <section class="success">
     <h1>Thank You for Your Donation!</h1>
-    <% if (amount && org && crypto && txid) { %>
+    <% if (amount && org && crypto) { %>
+
     <p>
       Your donation of $<%= amount %> USD to <%= org %> via <%=
       crypto.toUpperCase() %> has been submitted and is pending approval.

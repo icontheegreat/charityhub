@@ -1,7 +1,44 @@
 const express = require("express");
-const fs = require("fs");
 const path = require("path");
+const { MongoClient, ObjectId } = require("mongodb");
 const app = express();
+const cloudinary = require("cloudinary").v2;
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "charityhub",
+  api_key: process.env.CLOUDINARY_API_KEY || "296326773566931",
+  api_secret:
+    process.env.CLOUDINARY_API_SECRET || "5LSWq4s0aT7ix3b0LIMQRQ7WaC4",
+});
+
+// Configure Multer with Cloudinary storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "charityhub/proofs",
+    allowed_formats: ["jpg", "png", "jpeg"],
+  },
+});
+const upload = multer({ storage: storage });
+// MongoDB connection setup
+const uri =
+  process.env.MONGO_URI ||
+  "mongodb+srv://charityhubuser:xFsJjfRsqV1Wr3EC@charity-hub.aoj8snn.mongodb.net/charityhub?retryWrites=true&w=majority&appName=charity-hub";
+const client = new MongoClient(uri);
+
+// Connect to MongoDB
+async function connectToMongo() {
+  try {
+    await client.connect();
+    console.log("Connected to MongoDB");
+  } catch (error) {
+    console.error("MongoDB connection error:", error.message);
+  }
+}
+connectToMongo();
 
 // Set the view engine
 app.set("view engine", "ejs");
@@ -13,32 +50,6 @@ app.use(express.static(path.join(__dirname, "public")));
 // Middleware to parse form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Function to initialize donations.json if it doesn't exist
-const initializeDonationsFile = () => {
-  const filePath = path.join(__dirname, "donations.json");
-  if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, JSON.stringify([], null, 2));
-  }
-};
-
-// Call the function to ensure donations.json exists
-initializeDonationsFile();
-
-// Load donations into memory
-let donations = [];
-if (fs.existsSync("donations.json")) {
-  try {
-    donations = JSON.parse(fs.readFileSync("donations.json"));
-    if (!Array.isArray(donations)) {
-      console.error("donations.json is not an array, resetting to empty array");
-      donations = [];
-    }
-  } catch (error) {
-    console.error("Error reading donations.json:", error.message);
-    donations = [];
-  }
-}
 
 // List of organizations
 const organizations = [
@@ -67,7 +78,7 @@ app.get("/donate/:org?", (req, res) => {
 });
 
 // Handle donation form submission (POST)
-app.post("/donate", (req, res) => {
+app.post("/donate", async (req, res) => {
   const { org, name, email, amount, crypto } = req.body;
   if (!org || !name || !email || !amount || !crypto) {
     console.error("Missing form data:", req.body);
@@ -76,19 +87,19 @@ app.post("/donate", (req, res) => {
       .render("error", { message: "All fields are required" });
   }
   const donation = {
-    id: donations.length + 1,
     org,
     name,
     email,
     amount: parseFloat(amount),
     crypto,
     status: "Pending",
+    createdAt: new Date(),
   };
   try {
-    donations.push(donation);
-    fs.writeFileSync("donations.json", JSON.stringify(donations, null, 2));
-    console.log("Donation saved:", donation);
-    res.redirect(`/donate-crypto?donationId=${donation.id}`);
+    const db = client.db("charityhub");
+    const result = await db.collection("donations").insertOne(donation);
+    console.log("Donation saved to MongoDB:", result.insertedId);
+    res.redirect(`/donate-crypto?donationId=${result.insertedId}`);
   } catch (error) {
     console.error("Error saving donation:", error.message);
     res.status(500).render("error", { message: "Error saving donation" });
@@ -96,54 +107,81 @@ app.post("/donate", (req, res) => {
 });
 
 // Donation confirmation page
-app.get("/donate-crypto", (req, res) => {
-  const donationId = parseInt(req.query.donationId);
-  const donation = donations.find((d) => d.id === donationId);
-  if (!donation) {
-    return res.status(404).render("error", { message: "Donation not found" });
+app.get("/donate-crypto", async (req, res) => {
+  const donationId = req.query.donationId;
+  try {
+    const db = client.db("charityhub");
+    const donation = await db
+      .collection("donations")
+      .findOne({ _id: new ObjectId(donationId) });
+    if (!donation) {
+      return res.status(404).render("error", { message: "Donation not found" });
+    }
+    const cryptoAddresses = {
+      bitcoin: "bc1qyouractualbtcaddress",
+      solana: "yourSolanaAddressHere",
+      usdt: "yourUSDTTRC20orERC20address",
+      ethereum: "0xyourEthereumAddressHere",
+    };
+
+    const address = cryptoAddresses[donation.crypto] || "Address not available";
+    res.render("donate-crypto", { donation, address });
+  } catch (error) {
+    console.error("Error fetching donation:", error.message);
+    res.status(500).render("error", { message: "Error fetching donation" });
   }
-  const cryptoAddresses = {
-    bitcoin: "your-bitcoin-address-here",
-    solana: "your-solana-address-here",
-    usdt: "your-usdt-address-here",
-    ethereum: "your-ethereum-address-here",
-  };
-  const address = cryptoAddresses[donation.crypto] || "Address not available";
-  res.render("donate-crypto", { donation, address });
 });
 
-// Confirm donation
-app.post("/confirm-donation", (req, res) => {
-  const donationId = parseInt(req.body.donationId);
-  const donation = donations.find((d) => d.id === donationId);
-  if (donation) {
-    donation.status = "Pending Approval";
-    try {
-      fs.writeFileSync("donations.json", JSON.stringify(donations, null, 2));
-      res.redirect(`/success-crypto?donationId=${donation.id}`);
-    } catch (error) {
-      console.error("Error saving donation status:", error.message);
-      res.status(500).render("error", { message: "Error confirming donation" });
+// Confirm donation with image upload
+app.post("/confirm-donation", upload.single("proofImage"), async (req, res) => {
+  const donationId = req.body.donationId;
+  try {
+    const db = client.db("charityhub");
+    const proofImageUrl = req.file ? req.file.path : null;
+    if (!proofImageUrl) {
+      return res
+        .status(400)
+        .render("error", { message: "Proof of payment image is required" });
     }
-  } else {
-    res.status(404).render("error", { message: "Donation not found" });
+    const result = await db
+      .collection("donations")
+      .updateOne(
+        { _id: new ObjectId(donationId) },
+        { $set: { status: "Pending Approval", proofImageUrl } }
+      );
+    if (result.matchedCount === 0) {
+      return res.status(404).render("error", { message: "Donation not found" });
+    }
+    res.redirect(`/success-crypto?donationId=${donationId}`);
+  } catch (error) {
+    console.error("Error confirming donation:", error.message);
+    res.status(500).render("error", { message: "Error confirming donation" });
   }
 });
 
 // Success page
-app.get("/success-crypto", (req, res) => {
-  const donationId = parseInt(req.query.donationId);
-  const donation = donations.find((d) => d.id === donationId);
-  if (!donation) {
-    return res.status(404).render("error", { message: "Donation not found" });
+app.get("/success-crypto", async (req, res) => {
+  const donationId = req.query.donationId;
+  try {
+    const db = client.db("charityhub");
+    const donation = await db
+      .collection("donations")
+      .findOne({ _id: new ObjectId(donationId) });
+    if (!donation) {
+      return res.status(404).render("error", { message: "Donation not found" });
+    }
+    res.render("success-crypto", {
+      amount: donation.amount,
+      org: donation.org,
+      crypto: donation.crypto,
+      name: donation.name,
+      email: donation.email,
+      txid: donation.txid || "",
+    });
+  } catch (error) {
+    console.error("Error fetching donation for success page:", error.message);
+    res.status(500).render("error", { message: "Error loading success page" });
   }
-  res.render("success-crypto", {
-    amount: donation.amount,
-    org: donation.org,
-    crypto: donation.crypto,
-    name: donation.name,
-    email: donation.email,
-  });
 });
 
 // About Us route
@@ -165,7 +203,7 @@ app.post("/contact", (req, res) => {
 });
 
 // Org dashboard route
-app.get("/org-dashboard", (req, res) => {
+app.get("/org-dashboard", async (req, res) => {
   const authHeader = req.headers.authorization;
   if (
     !authHeader ||
@@ -176,26 +214,33 @@ app.get("/org-dashboard", (req, res) => {
     res.status(401).send("Authentication required");
     return;
   }
-  res.render("org-dashboard", { donations });
+  try {
+    const db = client.db("charityhub");
+    const donations = await db.collection("donations").find().toArray();
+    res.render("org-dashboard", { donations });
+  } catch (error) {
+    console.error("Error fetching donations for dashboard:", error.message);
+    res.status(500).render("error", { message: "Error loading dashboard" });
+  }
 });
 
 // Update donation status route
-app.post("/update-donation-status", (req, res) => {
+app.post("/update-donation-status", async (req, res) => {
   const { id, status } = req.body;
-  const donation = donations.find((d) => d.id === parseInt(id));
-  if (donation) {
-    donation.status = status;
-    try {
-      fs.writeFileSync("donations.json", JSON.stringify(donations, null, 2));
-      res.redirect("/org-dashboard");
-    } catch (error) {
-      console.error("Error saving donation status:", error.message);
-      res
-        .status(500)
-        .render("error", { message: "Error updating donation status" });
+  try {
+    const db = client.db("charityhub");
+    const result = await db
+      .collection("donations")
+      .updateOne({ _id: new ObjectId(id) }, { $set: { status } });
+    if (result.matchedCount === 0) {
+      return res.status(404).render("error", { message: "Donation not found" });
     }
-  } else {
-    res.status(404).render("error", { message: "Donation not found" });
+    res.redirect("/org-dashboard");
+  } catch (error) {
+    console.error("Error updating donation status:", error.message);
+    res
+      .status(500)
+      .render("error", { message: "Error updating donation status" });
   }
 });
 
