@@ -8,7 +8,7 @@ const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
 // Configure Cloudinary
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "charityhub",
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || "dos7dadyo",
   api_key: process.env.CLOUDINARY_API_KEY || "296326773566931",
   api_secret:
     process.env.CLOUDINARY_API_SECRET || "5LSWq4s0aT7ix3b0LIMQRQ7WaC4",
@@ -26,7 +26,7 @@ const upload = multer({ storage: storage });
 // MongoDB connection setup
 const uri =
   process.env.MONGO_URI ||
-  "mongodb+srv://charityhubuser:xFsJjfRsqV1Wr3EC@charity-hub.aoj8snn.mongodb.net/charityhub?retryWrites=true&w=majority&appName=charity-hub";
+  "mongodb+srv://charityhub-new:myUche12@charityhub.gseth8e.mongodb.net/charityhub?retryWrites=true&w=majority&appName=CharityHub"; // Updated with username, password, and database name
 const client = new MongoClient(uri);
 
 // Connect to MongoDB
@@ -59,9 +59,16 @@ const organizations = [
 ];
 
 // Home route
-app.get("/", (req, res) => {
-  console.log("Organizations in / route:", organizations);
-  res.render("index", { organizations });
+app.get("/", async (req, res) => {
+  try {
+    const db = client.db("charityhub");
+    const totalDonations = await db.collection("donations").countDocuments();
+
+    res.render("index", { organizations, totalDonations });
+  } catch (err) {
+    console.error("Error loading homepage:", err.message);
+    res.render("index", { organizations, totalDonations: 0 });
+  }
 });
 
 // Donate page (GET)
@@ -76,6 +83,8 @@ app.get("/donate/:org?", (req, res) => {
   console.log("Donate route - orgSlug:", orgSlug, "org:", org);
   res.render("donate", { org, formattedOrg, organizations });
 });
+console.log("Donation saved to MongoDB:", result.insertedId);
+res.redirect(`/donate-crypto?donationId=${result.insertedId}`);
 
 // Handle donation form submission (POST)
 app.post("/donate", async (req, res) => {
@@ -109,6 +118,13 @@ app.post("/donate", async (req, res) => {
 // Donation confirmation page
 app.get("/donate-crypto", async (req, res) => {
   const donationId = req.query.donationId;
+  const donation = await db
+    .collection("donations")
+    .findOne({ _id: new ObjectId(donationId) });
+  console.log("Donate-crypto - Found donation:", donation);
+  if (!donation) {
+    return res.status(404).render("error", { message: "Donation not found" });
+  }
   try {
     const db = client.db("charityhub");
     const donation = await db
@@ -118,13 +134,17 @@ app.get("/donate-crypto", async (req, res) => {
       return res.status(404).render("error", { message: "Donation not found" });
     }
     const cryptoAddresses = {
-      bitcoin: "bc1qyouractualbtcaddress",
-      solana: "yourSolanaAddressHere",
-      usdt: "yourUSDTTRC20orERC20address",
-      ethereum: "0xyourEthereumAddressHere",
+      bitcoin: "1MYtXT98J2bu5yGxAv3tMRbigyRT8ZKjE1",
+      solana: "FSRnivo8MHvWJgJZ3ymzf54NMJ3cUX12iWojpW3Rehn9",
+      usdt: "TUtu3FS3yhcwHT3qdcrVJ1xoBGavsAYViM",
+      ethereum: "0x8c169f53938da10fb04606a0ffc05ed2fb2c4a7a",
     };
 
-    const address = cryptoAddresses[donation.crypto] || "Address not available";
+    const selectedCrypto = (donation.crypto || "").toLowerCase();
+    const address = cryptoAddresses[selectedCrypto] || "Address not available";
+    console.log("Selected Crypto:", selectedCrypto);
+    console.log("Resolved Address:", address);
+
     res.render("donate-crypto", { donation, address });
   } catch (error) {
     console.error("Error fetching donation:", error.message);
@@ -135,6 +155,7 @@ app.get("/donate-crypto", async (req, res) => {
 // Confirm donation with image upload
 app.post("/confirm-donation", upload.single("proofImage"), async (req, res) => {
   const donationId = req.body.donationId;
+  console.log("Confirm donation - donationId:", donationId);
   try {
     const db = client.db("charityhub");
     const proofImageUrl = req.file ? req.file.path : null;
@@ -250,7 +271,7 @@ app.use((req, res) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
