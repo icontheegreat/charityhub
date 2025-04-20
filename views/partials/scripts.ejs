@@ -1,0 +1,9 @@
+<script>
+  function copyToClipboard() {
+    const address = document.getElementById("crypto-address").innerText;
+    navigator.clipboard
+      .writeText(address)
+      .then(() => alert("Address copied to clipboard!"))
+      .catch((err) => alert("Failed to copy: " + err));
+  }
+</script>
