@@ -37,34 +37,24 @@ async function connectToMongo() {
     console.log("Connected to MongoDB");
   } catch (error) {
     console.error("MongoDB connection error:", error.message);
-    throw error; // Ensure the app crashes if MongoDB fails to connect
+    process.exit(1);
   }
 }
-connectToMongo().catch((error) => {
-  console.error(
-    "Failed to start server due to MongoDB connection error:",
-    error.message
-  );
-  process.exit(1); // Exit the process if MongoDB connection fails
-});
+connectToMongo();
 
 // Set the view engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Serve static files (like CSS, images, JS)
+// Serve static files
 app.use(express.static(path.join(__dirname, "public")));
-
-// Middleware to parse form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Handle favicon.ico requests
-app.get("/favicon.ico", (req, res) => {
-  res.status(204).end(); // No content response for favicon.ico
-});
+// Handle favicon.ico
+app.get("/favicon.ico", (req, res) => res.status(204).end());
 
-// List of organizations
+// Organization list
 const organizations = [
   { name: "Helping Hands", slug: "helping-hands" },
   { name: "Beacon of Hope", slug: "beacon-of-hope" },
@@ -76,15 +66,13 @@ app.get("/", async (req, res) => {
   try {
     const db = client.db("charityhub");
     const totalDonations = await db.collection("donations").countDocuments();
-    console.log("Homepage - Total Donations:", totalDonations);
-    res.render("index", { organizations, totalDonations });
+    res.render("index", { organizations }); // No totalDonations here
   } catch (err) {
-    console.error("Error loading homepage:", err.message);
-    res.status(500).render("error", { message: "Error loading homepage" });
+    res.status(500).send(`Error loading homepage: ${err.message}`);
   }
 });
 
-// Donate page (GET)
+// Donate GET route (direct to the right organization page)
 app.get("/donate/:org?", (req, res) => {
   const orgSlug = req.params.org || req.query.org || "";
   const org = organizations.find((o) => o.slug === orgSlug) || null;
@@ -93,40 +81,37 @@ app.get("/donate/:org?", (req, res) => {
     : orgSlug
     ? orgSlug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
     : "";
-  console.log("Donate route - orgSlug:", orgSlug, "org:", org);
   res.render("donate", { org, formattedOrg, organizations });
 });
 
-// Handle donation form submission (POST)
+// ✅ Fixed: Donate POST route
 app.post("/donate", async (req, res) => {
   const { org, name, email, amount, crypto } = req.body;
-  if (!org || !name || !email || !amount || !crypto) {
-    console.error("Missing form data:", req.body);
-    return res
-      .status(400)
-      .render("error", { message: "All fields are required" });
+  const parsedAmount = parseFloat(amount);
+  if (isNaN(parsedAmount) || parsedAmount <= 0) {
+    return res.status(400).send("Invalid donation amount.");
   }
+
   const donation = {
     org,
     name,
     email,
-    amount: parseFloat(amount),
-    crypto,
+    amount: parsedAmount,
+    crypto: crypto.toLowerCase(),
     status: "Pending",
     createdAt: new Date(),
   };
+
   try {
     const db = client.db("charityhub");
     const result = await db.collection("donations").insertOne(donation);
-    console.log("Donation saved to MongoDB:", result.insertedId);
     res.redirect(`/donate-crypto?donationId=${result.insertedId}`);
   } catch (error) {
-    console.error("Error saving donation:", error.message);
-    res.status(500).render("error", { message: "Error saving donation" });
+    res.status(500).send(`Error saving donation: ${error.message}`);
   }
 });
 
-// Donation confirmation page
+// Donate confirmation
 app.get("/donate-crypto", async (req, res) => {
   const donationId = req.query.donationId;
   try {
@@ -134,52 +119,52 @@ app.get("/donate-crypto", async (req, res) => {
     const donation = await db
       .collection("donations")
       .findOne({ _id: new ObjectId(donationId) });
-    console.log("Donate-crypto - Found donation:", donation);
+
     if (!donation) {
-      return res.status(404).render("error", { message: "Donation not found" });
+      return res.status(404).send("Donation not found.");
     }
+
     const cryptoAddresses = {
       bitcoin: "1MYtXT98J2bu5yGxAv3tMRbigyRT8ZKjE1",
       solana: "FSRnivo8MHvWJgJZ3ymzf54NMJ3cUX12iWojpW3Rehn9",
       usdt: "TUtu3FS3yhcwHT3qdcrVJ1xoBGavsAYViM",
       ethereum: "0x8c169f53938da10fb04606a0ffc05ed2fb2c4a7a",
     };
+
     const selectedCrypto = (donation.crypto || "").toLowerCase();
     const address = cryptoAddresses[selectedCrypto] || "Address not available";
-    console.log("Selected Crypto:", selectedCrypto);
-    console.log("Resolved Address:", address);
+
     res.render("donate-crypto", { donation, address });
   } catch (error) {
-    console.error("Error fetching donation:", error.message);
-    res.status(500).render("error", { message: "Error fetching donation" });
+    res.status(500).send(`Error fetching donation: ${error.message}`);
   }
 });
 
-// Confirm donation with image upload
+// Confirm donation (image upload)
 app.post("/confirm-donation", upload.single("proofImage"), async (req, res) => {
   const donationId = req.body.donationId;
-  console.log("Confirm donation - donationId:", donationId);
   try {
     const db = client.db("charityhub");
     const proofImageUrl = req.file ? req.file.path : null;
+
     if (!proofImageUrl) {
-      return res
-        .status(400)
-        .render("error", { message: "Proof of payment image is required" });
+      return res.status(400).send("Proof image is required.");
     }
+
     const result = await db
       .collection("donations")
       .updateOne(
         { _id: new ObjectId(donationId) },
         { $set: { status: "Pending Approval", proofImageUrl } }
       );
+
     if (result.matchedCount === 0) {
-      return res.status(404).render("error", { message: "Donation not found" });
+      return res.status(404).send("Donation not found.");
     }
+
     res.redirect(`/success-crypto?donationId=${donationId}`);
   } catch (error) {
-    console.error("Error confirming donation:", error.message);
-    res.status(500).render("error", { message: "Error confirming donation" });
+    res.status(500).send(`Error confirming donation: ${error.message}`);
   }
 });
 
@@ -191,9 +176,11 @@ app.get("/success-crypto", async (req, res) => {
     const donation = await db
       .collection("donations")
       .findOne({ _id: new ObjectId(donationId) });
+
     if (!donation) {
-      return res.status(404).render("error", { message: "Donation not found" });
+      return res.status(404).send("Donation not found.");
     }
+
     res.render("success-crypto", {
       amount: donation.amount,
       org: donation.org,
@@ -203,30 +190,19 @@ app.get("/success-crypto", async (req, res) => {
       txid: donation.txid || "",
     });
   } catch (error) {
-    console.error("Error fetching donation for success page:", error.message);
-    res.status(500).render("error", { message: "Error loading success page" });
+    res.status(500).send(`Error loading success page: ${error.message}`);
   }
 });
 
-// About Us route
-app.get("/about", (req, res) => {
-  res.render("about");
-});
-
-// Contact Us route (GET)
-app.get("/contact", (req, res) => {
-  console.log("Contact route accessed");
-  res.render("contact");
-});
-
-// Contact Us form submission (POST)
+// About + Contact
+app.get("/about", (req, res) => res.render("about"));
+app.get("/contact", (req, res) => res.render("contact"));
 app.post("/contact", (req, res) => {
-  console.log("Contact form submitted");
-  console.log("Form data:", req.body);
+  console.log("Contact form submitted", req.body);
   res.redirect("/contact");
 });
 
-// Org dashboard route
+// Org Dashboard
 app.get("/org-dashboard", async (req, res) => {
   const authHeader = req.headers.authorization;
   if (
@@ -235,20 +211,19 @@ app.get("/org-dashboard", async (req, res) => {
       "Basic " + Buffer.from("admin:supersecret").toString("base64")
   ) {
     res.set("WWW-Authenticate", 'Basic realm="Admin Dashboard"');
-    res.status(401).send("Authentication required");
-    return;
+    return res.status(401).send("Authentication required");
   }
+
   try {
     const db = client.db("charityhub");
     const donations = await db.collection("donations").find().toArray();
     res.render("org-dashboard", { donations });
   } catch (error) {
-    console.error("Error fetching donations for dashboard:", error.message);
-    res.status(500).render("error", { message: "Error loading dashboard" });
+    res.status(500).send(`Error loading dashboard: ${error.message}`);
   }
 });
 
-// Update donation status route
+// Update donation status
 app.post("/update-donation-status", async (req, res) => {
   const { id, status } = req.body;
   try {
@@ -256,35 +231,39 @@ app.post("/update-donation-status", async (req, res) => {
     const result = await db
       .collection("donations")
       .updateOne({ _id: new ObjectId(id) }, { $set: { status } });
+
     if (result.matchedCount === 0) {
-      return res.status(404).render("error", { message: "Donation not found" });
+      return res.status(404).send("Donation not found.");
     }
+
     res.redirect("/org-dashboard");
   } catch (error) {
-    console.error("Error updating donation status:", error.message);
-    res
-      .status(500)
-      .render("error", { message: "Error updating donation status" });
+    res.status(500).send(`Error updating status: ${error.message}`);
   }
 });
 
-// Catch-all route
+// 🔍 Diagnostic route (optional)
+app.get("/some-route", async (req, res) => {
+  const db = client.db("charityhub");
+  const data = await db.listCollections().toArray();
+  res.send(data);
+});
+
+// Catch-all
 app.use((req, res) => {
-  console.log("Catch-all route hit for:", req.url);
-  res.status(404).render("error", { message: "Page not found" });
+  res.status(404).send("Page not found.");
 });
 
-// Global error handler
+// Error handler
 app.use((err, req, res, next) => {
-  console.error("Global error handler:", err.message, err.stack);
-  res.status(500).render("error", { message: "Something went wrong!" });
+  console.error("Global error:", err.stack);
+  res.status(500).send(`Something went wrong: ${err.message}`);
 });
 
-// Start the server
-const PORT = process.env.PORT || 4000;
+// Start server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
 });
 
-// Export the app for Vercel
 module.exports = app;

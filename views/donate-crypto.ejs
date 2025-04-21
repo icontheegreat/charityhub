@@ -2,126 +2,157 @@
 
 <main>
   <style>
-    .crypto-section {
-      padding: 60px 20px;
-      text-align: center;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .crypto-section h1 {
-      font-size: 2.5em;
-      color: #f46d25;
-      margin-bottom: 20px;
-    }
-    .crypto-section p {
-      font-size: 1.2em;
-      color: #333;
-      margin-bottom: 15px;
-    }
-    .crypto-section form {
-      margin-top: 20px;
-    }
-    .crypto-section label {
-      display: block;
-      text-align: left;
-      margin: 10px 0 5px;
-      color: #333;
-    }
-    .crypto-section input[type="file"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      font-size: 1em;
-    }
-    .crypto-section button {
-      background-color: #f46d25;
-      color: white;
-      padding: 12px 30px;
-      border: none;
-      border-radius: 5px;
-      font-size: 1.1em;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .crypto-section button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
-    .crypto-section button:hover:not(:disabled) {
-      background-color: #d75c1f;
-    }
-    .address-container {
+    .payment-section {
+      min-height: 80vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      margin-bottom: 15px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      padding: 40px 20px;
     }
-    .address-container span {
-      font-weight: bold;
-      word-break: break-all;
+    .payment-container {
+      max-width: 600px;
+      width: 100%;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      text-align: center;
     }
-    .address-container button {
+    .payment-container h1 {
+      font-size: 2.5em;
+      color: #333;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+    .payment-container p {
+      font-size: 1.1em;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .crypto-address {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      font-size: 1em;
+      color: #333;
+      font-family: monospace;
+    }
+    .crypto-address span {
+      margin-right: 10px;
+    }
+    .copy-btn {
       background-color: #f46d25;
-      color: white;
-      padding: 5px 10px;
+      color: #fff;
       border: none;
+      padding: 8px 16px;
       border-radius: 5px;
       cursor: pointer;
+      transition: background 0.3s;
+      font-size: 0.9em;
     }
-    .address-container button:hover {
+    .copy-btn:hover {
       background-color: #d75c1f;
+    }
+    .upload-section {
+      margin: 20px 0;
+    }
+    .upload-section label {
+      display: block;
+      font-size: 1em;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .upload-section input[type="file"] {
+      display: block;
+      margin: 0 auto;
+      font-size: 0.9em;
+      color: #666;
+    }
+    .submit-btn {
+      background-color: #f46d25;
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 20px;
+    }
+    .submit-btn:hover {
+      background-color: #d75c1f;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #f46d25;
+      text-decoration: none;
+      font-size: 1em;
+      transition: color 0.3s;
+    }
+    .back-link:hover {
+      color: #d75c1f;
+    }
+    @media (max-width: 768px) {
+      .payment-container h1 {
+        font-size: 2em;
+      }
+      .payment-container {
+        padding: 20px;
+      }
     }
   </style>
 
-  <section class="crypto-section">
-    <h1>Complete Your Donation</h1>
-    <p>
-      Thank you, <%= donation.name %>, for donating $<%= donation.amount %> to
-      <%= donation.org %>!
-    </p>
-    <p>
-      Please send the payment in <%= donation.crypto %> to the following
-      address:
-    </p>
-    <div class="address-container">
-      <span id="cryptoAddress"><%= address %></span>
-      <button onclick="copyAddress()">Copy</button>
+  <section class="payment-section">
+    <div class="payment-container">
+      <h1>Complete Your Donation</h1>
+      <p>
+        Thank you, <%= donation.name %>, for donating $<%= donation.amount %> to
+        <%= donation.org %>! Please send the payment in <%= donation.crypto %>
+        to the following address:
+      </p>
+      <div class="crypto-address">
+        <span><%= address %></span>
+        <button class="copy-btn" onclick="copyAddress('<%= address %>')">
+          Copy
+        </button>
+      </div>
+      <p>
+        Once you’ve sent the payment, please upload a screenshot of the
+        transaction as proof of payment.
+      </p>
+      <form
+        method="POST"
+        action="/confirm-donation"
+        enctype="multipart/form-data"
+      >
+        <input type="hidden" name="donationId" value="<%= donation._id %>" />
+        <div class="upload-section">
+          <label for="proofImage">Upload Proof of Payment (Screenshot):</label>
+          <input
+            type="file"
+            id="proofImage"
+            name="proofImage"
+            accept="image/*"
+            required
+          />
+        </div>
+        <button type="submit" class="submit-btn">
+          I Have Sent the Payment
+        </button>
+      </form>
+      <a href="/donate" class="back-link">Back to Donate</a>
     </div>
-    <p>
-      Once you’ve sent the payment, please upload a screenshot of the
-      transaction as proof of payment.
-    </p>
-    <form
-      method="POST"
-      action="/confirm-donation"
-      enctype="multipart/form-data"
-    >
-      <input type="hidden" name="donationId" value="<%= donation._id %>" />
-      <label for="proofImage">Upload Proof of Payment (Screenshot):</label>
-      <input
-        type="file"
-        id="proofImage"
-        name="proofImage"
-        accept="image/*"
-        required
-        onchange="enableButton()"
-      />
-      <button type="submit" id="confirmButton" disabled>
-        I Have Sent the Payment
-      </button>
-    </form>
   </section>
 
   <script>
-    function enableButton() {
-      const fileInput = document.getElementById("proofImage");
-      const confirmButton = document.getElementById("confirmButton");
-      confirmButton.disabled = !fileInput.files.length;
-    }
-
-    function copyAddress() {
-      const address = document.getElementById("cryptoAddress").innerText;
+    function copyAddress(address) {
       navigator.clipboard.writeText(address).then(() => {
         alert("Address copied to clipboard!");
       });
